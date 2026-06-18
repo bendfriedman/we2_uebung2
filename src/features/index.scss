@@ -1,0 +1,66 @@
+/* <style reset> */
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+a {
+  text-decoration: none;
+  color: var(--font-primary-clr);
+}
+
+img {
+  max-width: 100%;
+}
+
+li {
+  list-style: none;
+}
+
+/* </style reset> */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 1rem;
+
+  .page-description {
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+}
+
+#LogoutButton {
+  margin-right: 1rem;
+}
+
+#UserCard {
+  width: 17rem;
+
+  #UserCardImage {
+    width: 50%;
+    margin: 0 auto;
+    padding: 0.5rem;
+  }
+
+  #UserCardButtons {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

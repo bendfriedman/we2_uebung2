@@ -3,28 +3,47 @@ import { authenticate } from "./loginService";
 
 interface LoginState {
   token: string | null;
-  userID: string | null;
-  isAdministrator: boolean;
+  user: IUser | null;
   loading: boolean;
   error: string | null;
 }
 
+export interface IUser {
+  userID: string;
+  firstName?: string;
+  lastName?: string;
+  isAdministrator?: boolean;
+}
+
 const initialState: LoginState = {
   token: null,
-  userID: null,
-  isAdministrator: false,
+  user: null,
   loading: false,
   error: null,
 };
 
+export async function fetchUser(userID: string, token: string): Promise<IUser> {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("User not found");
+  }
+
+  return response.json();
+}
+
 export const loginThunk = createAsyncThunk(
   "login/authenticate",
-  async (
-    { userID, password }: { userID: string; password: string },
-    { rejectWithValue },
-  ) => {
+  async ({ userID, password }: { userID: string; password: string }, { rejectWithValue }) => {
     try {
-      return await authenticate(userID, password);
+      const authResult = await authenticate(userID, password);
+      const user = await fetchUser(authResult.userID, authResult.token);
+      console.log("Fetched user:", user);
+      const result = { ...authResult, user };
+      return result;
     } catch (error) {
       return rejectWithValue((error as Error).message);
     }
@@ -37,10 +56,9 @@ const loginSlice = createSlice({
   reducers: {
     logout(state) {
       state.token = null;
-      state.userID = null;
-      state.isAdministrator = false;
-      state.error = null;
+      state.user = null;
       state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -50,10 +68,9 @@ const loginSlice = createSlice({
         state.error = null;
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
-        state.loading = false;
         state.token = action.payload.token;
-        state.userID = action.payload.userID;
-        state.isAdministrator = action.payload.isAdministrator;
+        state.user = action.payload.user;
+        state.loading = false;
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;

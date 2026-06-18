@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { AppDispatch, RootState } from "../../../store";
+import type { AppDispatch, RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../login/state/loginSlice";
-import "./Navbar.scss";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,9 +16,27 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
+        <NavLink className="navbar-brand" to="/start">
           BHT
-        </a>
+        </NavLink>
+
+        {token && (
+          <div className="navbar-collapse">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/start" id="OpenStartPageButton">
+                  Home
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/userManagement" id="OpenUserManagementPageButton">
+                  User Management
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        )}
+
         <div>
           {token && (
             <button id="LogoutButton" className="btn btn-outline-danger" onClick={() => dispatch(logout())}>

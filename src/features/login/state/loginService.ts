@@ -1,18 +1,13 @@
-const Backend_URL = "https://localhost:443";
-
 export interface LoginResult {
   token: string;
   userID: string;
   isAdministrator: boolean;
 }
 
-export async function authenticate(
-  userID: string,
-  password: string,
-): Promise<LoginResult> {
+export async function authenticate(userID: string, password: string): Promise<LoginResult> {
   const credentials = btoa(`${userID}:${password}`);
 
-  const response = await fetch(`${Backend_URL}/api/authenticate`, {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/authenticate`, {
     method: "GET",
     headers: {
       Authorization: `Basic ${credentials}`,
