@@ -6,7 +6,10 @@ export interface LoginResult {
   isAdministrator: boolean;
 }
 
-export async function authenticate(userID: string, password: string): Promise<LoginResult> {
+export async function authenticate(
+  userID: string,
+  password: string,
+): Promise<LoginResult> {
   const credentials = btoa(`${userID}:${password}`);
 
   const response = await fetch(`${Backend_URL}/api/authenticate`, {
@@ -23,11 +26,11 @@ export async function authenticate(userID: string, password: string): Promise<Lo
   const authHeader = response.headers.get("Authorization");
   const token = authHeader!.slice("Bearer ".length);
 
-  const data = await response.json();
+  const payload = JSON.parse(atob(token.split(".")[1])); // JWT payload is the second part of the token
 
   return {
     token,
-    userID: data.userID,
-    isAdministrator: data.isAdministrator,
+    userID: payload.userID,
+    isAdministrator: payload.isAdministrator,
   };
 }

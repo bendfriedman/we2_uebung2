@@ -19,7 +19,10 @@ const initialState: LoginState = {
 
 export const loginThunk = createAsyncThunk(
   "login/authenticate",
-  async ({ userID, password }: { userID: string; password: string }, { rejectWithValue }) => {
+  async (
+    { userID, password }: { userID: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
       return await authenticate(userID, password);
     } catch (error) {
@@ -37,6 +40,7 @@ const loginSlice = createSlice({
       state.userID = null;
       state.isAdministrator = false;
       state.error = null;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
