@@ -17,16 +17,19 @@ export const fetchUsersThunk = createAsyncThunk(
   "userManagement/fetchUsers",
   async (token: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/users`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
       return response.json();
     } catch (error) {
-      return rejectWithValue("Failed to fetch users");
+      return rejectWithValue(error);
     }
   },
 );

@@ -7,7 +7,9 @@ import { fetchUsersThunk } from "../state/userManagementSlice";
 
 const UserManagementPage = () => {
   const token = useSelector((state: RootState) => state.login.token);
-  const allUsers: IUser[] = useSelector((state: RootState) => state.userManagement.users);
+  const allUsers: IUser[] = useSelector(
+    (state: RootState) => state.userManagement.users,
+  );
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -15,13 +17,14 @@ const UserManagementPage = () => {
     if (token) {
       dispatch(fetchUsersThunk(token));
     }
-  }, []);
+  }, [token, dispatch]);
 
   return (
     <div className="page" id="UserManagementPage">
       <h2>User Management Page der BHT</h2>
       <p className="page-description">
-        Hier können Sie Ihre Benutzer verwalten und den Status Ihrer Bewerbungen einsehen.
+        Hier können Sie Ihre Benutzer verwalten und den Status Ihrer Bewerbungen
+        einsehen.
       </p>
       {allUsers.map((user) => (
         <UserCard key={user.userID} user={user} />
