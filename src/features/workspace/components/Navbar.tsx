@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const token = useSelector((state: RootState) => state.login.token);
+  const user = useSelector((state: RootState) => state.login.user);
   const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
@@ -37,23 +38,21 @@ const Navbar = () => {
           <div className="navbar-collapse collapse">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  to="/start"
-                  id="OpenStartPageButton"
-                >
-                  Home
+                <NavLink className="nav-link" to="/" id="OpenStartPageButton">
+                  Start
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  to="/userManagement"
-                  id="OpenUserManagementPageButton"
-                >
-                  User Management
-                </NavLink>
-              </li>
+              {user?.isAdministrator && (
+                <li className="nav-item">
+                  <NavLink
+                    className="nav-link"
+                    to="/userManagement"
+                    id="OpenUserManagementPageButton"
+                  >
+                    User Management
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
         )}
