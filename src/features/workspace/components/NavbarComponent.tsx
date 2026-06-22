@@ -15,7 +15,7 @@ const Navbar = () => {
   }, [darkMode]);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top" id="main-nav">
       <div className="container-fluid">
         <NavLink className="navbar-brand" to="/start">
           BHT
