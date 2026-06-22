@@ -3,11 +3,11 @@ import { useState } from "react";
 import type { RootState } from "../../store";
 import type { IUser } from "../../login/state/loginSlice";
 
-interface CreateUserComponentProps {
-  onUserCreated: () => void;
+interface EditUserComponentProps {
+  onUsereditd: () => void;
 }
 
-const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
+const EditUserComponent = () => {
   const token = useSelector((state: RootState) => state.login.token);
   const [userID, setUserID] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
@@ -15,7 +15,7 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
   const [password, setPassword] = useState<string>("");
   const [isAdministrator, setIsAdministrator] = useState<string>("");
 
-  const createUser = async (newUser: IUser & { password: string }) => {
+  const editUser = async (newUser: IUser & { password: string }) => {
     try {
       const respone = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users`, {
         method: "POST",
@@ -23,16 +23,15 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
         body: JSON.stringify(newUser),
       });
       if (!respone.ok) {
-        throw new Error("Failed to create new user!");
+        throw new Error("Failed to edit new user!");
       }
-      onUserCreated();
     } catch (e) {
       console.log(e);
     }
   };
 
   return (
-    <div id="UserManagementPageCreateComponent">
+    <div id="UserManagementPageEditComponent">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -43,13 +42,13 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
             password: password,
             isAdministrator: isAdministrator === "true",
           };
-          createUser(newUser);
+          editUser(newUser);
         }}
       >
         <label>
           User ID:
           <input
-            id="CreateUserComponentEditUserID"
+            id="EditUserComponentEditUserID"
             value={userID}
             onChange={(e) => setUserID(e.target.value)}
             className="form-control"
@@ -61,7 +60,7 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
         <label>
           First Name:
           <input
-            id="CreateUserComponentEditFirstName"
+            id="EditUserComponentEditFirstName"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="form-control"
@@ -72,7 +71,7 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
         <label>
           Last Name:
           <input
-            id="CreateUserComponentEditLastName"
+            id="EditUserComponentEditLastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="form-control"
@@ -83,7 +82,7 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
         <label>
           Password:
           <input
-            id="CreateUserComponentEditPassword"
+            id="EditUserComponentEditPassword"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="form-control"
@@ -98,20 +97,20 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
             onChange={(e) => setIsAdministrator(e.target.value)}
             className="form-select"
             aria-label="Default select example"
-            id="CreateUserComponentEditIsAdministrator"
+            id="EditUserComponentEditIsAdministrator"
           >
             <option value="false">No</option>
             <option value="true">Yes</option>
           </select>
         </label>
 
-        <button id="CreateUserComponentCreateUserButton" className="btn btn-success" type="submit">
+        <button id="EditUserComponenteditUserButton" className="btn btn-success" type="submit">
           <i className="bi bi-plus-circle" />
-          Create
+          Edit
         </button>
       </form>
     </div>
   );
 };
 
-export default CreateUserComponent;
+export default EditUserComponent;

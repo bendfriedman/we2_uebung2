@@ -1,7 +1,6 @@
 export interface LoginResult {
   token: string;
   userID: string;
-  isAdministrator: boolean;
 }
 
 export async function authenticate(userID: string, password: string): Promise<LoginResult> {
@@ -26,6 +25,5 @@ export async function authenticate(userID: string, password: string): Promise<Lo
   return {
     token,
     userID: payload.userID,
-    isAdministrator: payload.isAdministrator,
   };
 }

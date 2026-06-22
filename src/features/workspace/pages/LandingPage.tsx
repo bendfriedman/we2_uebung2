@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LoginDialog from "../../login/components/LoginDialog";
+import LoginDialog from "../../login/components/LoginDialogComponent";
 
 const LandingPage = () => {
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
