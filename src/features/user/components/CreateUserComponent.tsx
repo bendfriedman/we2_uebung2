@@ -13,7 +13,8 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [isAdministrator, setIsAdministrator] = useState<string>("");
+  const [isAdministrator, setIsAdministrator] = useState<string>("false");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const createUser = async (newUser: IUser & { password: string }) => {
     try {

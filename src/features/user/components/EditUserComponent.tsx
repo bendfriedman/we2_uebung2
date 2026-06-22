@@ -4,27 +4,30 @@ import type { RootState } from "../../store";
 import type { IUser } from "../../login/state/loginSlice";
 
 interface EditUserComponentProps {
-  onUsereditd: () => void;
+  selectedUser: IUser;
+  onListView: () => void;
+  onUserEdited: () => void;
 }
 
-const EditUserComponent = () => {
+const EditUserComponent = ({ selectedUser, onListView, onUserEdited }: EditUserComponentProps) => {
   const token = useSelector((state: RootState) => state.login.token);
-  const [userID, setUserID] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [userID, setUserID] = useState<string>(selectedUser.userID);
+  const [firstName, setFirstName] = useState<string>(selectedUser.firstName ?? "");
+  const [lastName, setLastName] = useState<string>(selectedUser.lastName ?? "");
   const [password, setPassword] = useState<string>("");
-  const [isAdministrator, setIsAdministrator] = useState<string>("");
+  const [isAdministrator, setIsAdministrator] = useState<string>(selectedUser.isAdministrator ? "true" : "false");
 
-  const editUser = async (newUser: IUser & { password: string }) => {
+  const editUser = async (editedUser: IUser & { password: string }) => {
     try {
-      const respone = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users`, {
-        method: "POST",
+      const respone = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`, {
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify(editedUser),
       });
       if (!respone.ok) {
         throw new Error("Failed to edit new user!");
       }
+      onUserEdited();
     } catch (e) {
       console.log(e);
     }
@@ -32,17 +35,28 @@ const EditUserComponent = () => {
 
   return (
     <div id="UserManagementPageEditComponent">
+      <p className="page-description">
+        Here you can edit the user {selectedUser.firstName} {selectedUser.lastName}.
+      </p>
+      <button
+        type="button"
+        id="OpenUserManagementPageListComponentButton"
+        className="btn btn-primary"
+        onClick={() => onListView()}
+      >
+        <i className="bi bi-arrow-left-circle" />
+        Back to List
+      </button>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const newUser = {
-            userID: userID,
+          const editedUser: any = {
             firstName: firstName,
             lastName: lastName,
-            password: password,
             isAdministrator: isAdministrator === "true",
           };
-          editUser(newUser);
+          if (password !== "") editedUser.password = password;
+          editUser(editedUser);
         }}
       >
         <label>
@@ -55,6 +69,7 @@ const EditUserComponent = () => {
             type="text"
             autoFocus
             name="userID"
+            disabled
           />
         </label>
         <label>
@@ -104,9 +119,9 @@ const EditUserComponent = () => {
           </select>
         </label>
 
-        <button id="EditUserComponenteditUserButton" className="btn btn-success" type="submit">
-          <i className="bi bi-plus-circle" />
-          Edit
+        <button id="EditUserComponentSaveUserButton" className="btn btn-success" type="submit">
+          <i className="bi bi-file-earmark-arrow-up" />
+          Save
         </button>
       </form>
     </div>

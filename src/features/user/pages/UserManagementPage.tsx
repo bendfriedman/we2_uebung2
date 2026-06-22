@@ -5,6 +5,7 @@ import type { IUser } from "../../login/state/loginSlice";
 import { useEffect } from "react";
 import UserList from "../components/UserListComponent";
 import CreateUserComponent from "../components/CreateUserComponent";
+import EditUserComponent from "../components/EditUserComponent";
 
 type UserView = "list" | "create" | "edit";
 
@@ -12,6 +13,8 @@ const UserManagementPage = () => {
   const token = useSelector((state: RootState) => state.login.token);
   const [allUsers, setAllUsers] = useState<IUser[]>([]);
   const [view, setView] = useState<UserView>("list");
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState<IUser | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const loadAllUsers = async () => {
     try {
@@ -34,6 +37,13 @@ const UserManagementPage = () => {
       loadAllUsers();
     }
   }, [token]);
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   return (
     <div className="page" id="UserManagementPage">
@@ -60,21 +70,55 @@ const UserManagementPage = () => {
           name="userView"
           id="createView"
           checked={view === "create"}
-          onChange={() => setView("create")}
+          onChange={() => {
+            setView("create");
+            setSuccessMessage(null);
+          }}
         />
         <label className="btn btn-outline-primary" htmlFor="createView">
           Create New User
         </label>
       </div>
+      {successMessage && (
+        <div className="alert alert-success alert-dismissible" id="user-mgmt-success-message" role="alert">
+          {successMessage}
+          <button type="button" className="btn-close" onClick={() => setSuccessMessage(null)} />
+        </div>
+      )}
       {view == "create" && (
         <CreateUserComponent
           onUserCreated={() => {
+            setSuccessMessage("User successfully created!");
             loadAllUsers();
             setView("list");
           }}
         />
       )}
-      {view == "list" && <UserList allUsers={allUsers} onUserDeleted={() => loadAllUsers()} />}
+      {view == "list" && (
+        <UserList
+          allUsers={allUsers}
+          onUserDeleted={() => {
+            loadAllUsers();
+            setSuccessMessage("User successfully deleted!");
+          }}
+          onEditView={(selectedUser) => {
+            setSelectedUserForEdit(selectedUser);
+            setView("edit");
+            setSuccessMessage(null);
+          }}
+        />
+      )}
+      {view == "edit" && (
+        <EditUserComponent
+          selectedUser={selectedUserForEdit!}
+          onListView={() => setView("list")}
+          onUserEdited={() => {
+            setSuccessMessage("User successfully edited!");
+            loadAllUsers();
+            setView("list");
+          }}
+        />
+      )}
     </div>
   );
 };

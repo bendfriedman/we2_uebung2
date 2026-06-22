@@ -41,7 +41,7 @@ export const loginThunk = createAsyncThunk(
     try {
       const authResult = await authenticate(userID, password);
       const user = await fetchUser(authResult.userID, authResult.token);
-      console.log("Fetched user:", user);
+
       const result = { ...authResult, user };
       return result;
     } catch (error) {
