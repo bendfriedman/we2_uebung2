@@ -9,21 +9,35 @@ interface EditUserComponentProps {
   onUserEdited: () => void;
 }
 
-const EditUserComponent = ({ selectedUser, onListView, onUserEdited }: EditUserComponentProps) => {
+const EditUserComponent = ({
+  selectedUser,
+  onListView,
+  onUserEdited,
+}: EditUserComponentProps) => {
   const token = useSelector((state: RootState) => state.login.token);
   const [userID, setUserID] = useState<string>(selectedUser.userID);
-  const [firstName, setFirstName] = useState<string>(selectedUser.firstName ?? "");
+  const [firstName, setFirstName] = useState<string>(
+    selectedUser.firstName ?? "",
+  );
   const [lastName, setLastName] = useState<string>(selectedUser.lastName ?? "");
   const [password, setPassword] = useState<string>("");
-  const [isAdministrator, setIsAdministrator] = useState<string>(selectedUser.isAdministrator ? "true" : "false");
+  const [isAdministrator, setIsAdministrator] = useState<string>(
+    selectedUser.isAdministrator ? "true" : "false",
+  );
 
-  const editUser = async (editedUser: IUser & { password: string }) => {
+  const editUser = async (editedUser: IUser) => {
     try {
-      const respone = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(editedUser),
-      });
+      const respone = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedUser),
+        },
+      );
       if (!respone.ok) {
         throw new Error("Failed to edit new user!");
       }
@@ -36,7 +50,8 @@ const EditUserComponent = ({ selectedUser, onListView, onUserEdited }: EditUserC
   return (
     <div id="UserManagementPageEditComponent">
       <p className="page-description">
-        Here you can edit the user {selectedUser.firstName} {selectedUser.lastName}.
+        Here you can edit the user {selectedUser.firstName}{" "}
+        {selectedUser.lastName}.
       </p>
       <button
         type="button"
@@ -119,7 +134,11 @@ const EditUserComponent = ({ selectedUser, onListView, onUserEdited }: EditUserC
           </select>
         </label>
 
-        <button id="EditUserComponentSaveUserButton" className="btn btn-success" type="submit">
+        <button
+          id="EditUserComponentSaveUserButton"
+          className="btn btn-success"
+          type="submit"
+        >
           <i className="bi bi-file-earmark-arrow-up" />
           Save
         </button>

@@ -13,6 +13,7 @@ export interface IUser {
   firstName?: string;
   lastName?: string;
   isAdministrator?: boolean;
+  password?: string;
 }
 
 const initialState: LoginState = {
@@ -23,10 +24,13 @@ const initialState: LoginState = {
 };
 
 export async function fetchUser(userID: string, token: string): Promise<IUser> {
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_SERVER_URL}/api/users/${userID}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
 
   if (!response.ok) {
     throw new Error("User not found");
@@ -37,7 +41,10 @@ export async function fetchUser(userID: string, token: string): Promise<IUser> {
 
 export const loginThunk = createAsyncThunk(
   "login/authenticate",
-  async ({ userID, password }: { userID: string; password: string }, { rejectWithValue }) => {
+  async (
+    { userID, password }: { userID: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
       const authResult = await authenticate(userID, password);
       const user = await fetchUser(authResult.userID, authResult.token);

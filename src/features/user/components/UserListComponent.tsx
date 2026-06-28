@@ -5,21 +5,38 @@ interface UserListProps {
   allUsers: IUser[];
   onUserDeleted: () => void;
   onEditView: (selectedUser: IUser) => void;
+  loading: Boolean;
 }
 
-const UserList = ({ allUsers, onUserDeleted, onEditView }: UserListProps) => {
+const UserListComponent = ({
+  allUsers,
+  onUserDeleted,
+  onEditView,
+  loading,
+}: UserListProps) => {
   return (
     <div id="UserManagementPageListComponent">
       <p className="page-description">
-        Hier können Sie Ihre Benutzer verwalten und den Status Ihrer Bewerbungen einsehen.
+        Hier können Sie Ihre Benutzer verwalten und den Status Ihrer Bewerbungen
+        einsehen.
       </p>
+      {loading && (
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
       <div className="user-list">
         {allUsers.map((user) => (
-          <UserCardComponent key={user.userID} user={user} onUserDeleted={onUserDeleted} onEditView={onEditView} />
+          <UserCardComponent
+            key={user.userID}
+            user={user}
+            onUserDeleted={onUserDeleted}
+            onEditView={onEditView}
+          />
         ))}
       </div>
     </div>
   );
 };
 
-export default UserList;
+export default UserListComponent;

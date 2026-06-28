@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { RootState } from "../../store";
 import type { IUser } from "../../login/state/loginSlice";
 import { useEffect } from "react";
-import UserList from "../components/UserListComponent";
+import UserListComponent from "../components/UserListComponent";
 import CreateUserComponent from "../components/CreateUserComponent";
 import EditUserComponent from "../components/EditUserComponent";
 
@@ -13,15 +13,22 @@ const UserManagementPage = () => {
   const token = useSelector((state: RootState) => state.login.token);
   const [allUsers, setAllUsers] = useState<IUser[]>([]);
   const [view, setView] = useState<UserView>("list");
-  const [selectedUserForEdit, setSelectedUserForEdit] = useState<IUser | null>(null);
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState<IUser | null>(
+    null,
+  );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<Boolean>(false);
 
   const loadAllUsers = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/users`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -29,6 +36,8 @@ const UserManagementPage = () => {
       setAllUsers(result);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,10 +57,19 @@ const UserManagementPage = () => {
   return (
     <div className="page" id="UserManagementPage">
       {/* Hidden button for silenium tests by prof */}
-      <button id="UserManagementPageCreateUserButton" style={{ display: "none" }} onClick={() => setView("create")} />
+      <button
+        id="UserManagementPageCreateUserButton"
+        style={{ display: "none" }}
+        onClick={() => setView("create")}
+      />
       {/* // */}
       <h2>User Management Page der BHT</h2>
-      <div className="btn-group" role="group" aria-label="User view toggle" id="user-view-toggle">
+      <div
+        className="btn-group"
+        role="group"
+        aria-label="User view toggle"
+        id="user-view-toggle"
+      >
         <input
           type="radio"
           className="btn-check"
@@ -80,11 +98,20 @@ const UserManagementPage = () => {
         </label>
       </div>
       {successMessage && (
-        <div className="alert alert-success alert-dismissible" id="user-mgmt-success-message" role="alert">
+        <div
+          className="alert alert-success alert-dismissible"
+          id="user-mgmt-success-message"
+          role="alert"
+        >
           {successMessage}
-          <button type="button" className="btn-close" onClick={() => setSuccessMessage(null)} />
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setSuccessMessage(null)}
+          />
         </div>
       )}
+
       {view == "create" && (
         <CreateUserComponent
           onUserCreated={() => {
@@ -95,7 +122,7 @@ const UserManagementPage = () => {
         />
       )}
       {view == "list" && (
-        <UserList
+        <UserListComponent
           allUsers={allUsers}
           onUserDeleted={() => {
             loadAllUsers();
@@ -106,6 +133,7 @@ const UserManagementPage = () => {
             setView("edit");
             setSuccessMessage(null);
           }}
+          loading={loading}
         />
       )}
       {view == "edit" && (

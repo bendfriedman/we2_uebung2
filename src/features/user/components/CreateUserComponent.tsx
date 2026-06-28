@@ -14,15 +14,21 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
   const [lastName, setLastName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isAdministrator, setIsAdministrator] = useState<string>("false");
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  // const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const createUser = async (newUser: IUser & { password: string }) => {
+  const createUser = async (newUser: IUser) => {
     try {
-      const respone = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/users`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
+      const respone = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/users`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        },
+      );
       if (!respone.ok) {
         throw new Error("Failed to create new user!");
       }
@@ -106,7 +112,11 @@ const CreateUserComponent = ({ onUserCreated }: CreateUserComponentProps) => {
           </select>
         </label>
 
-        <button id="CreateUserComponentCreateUserButton" className="btn btn-success" type="submit">
+        <button
+          id="CreateUserComponentCreateUserButton"
+          className="btn btn-success"
+          type="submit"
+        >
           <i className="bi bi-plus-circle" />
           Create
         </button>
